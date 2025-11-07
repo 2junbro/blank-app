@@ -15,14 +15,13 @@ from langchain.agents import create_tool_calling_agent, AgentExecutor
 # 1. Web Search Tool
 # --------------------------------------------------------------------
 def search_web():
-    # 1. Tavily Search Tool 호출하기
     return TavilySearchResults(k=6, name="web_search")
+
 
 # --------------------------------------------------------------------
 # 2. PDF Tool
 # --------------------------------------------------------------------
 def load_pdf_files(uploaded_files):
-    # 2. PDF 로더 초기화 및 문서 불러오기
     all_documents = []
     for uploaded_file in uploaded_files:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
@@ -33,19 +32,12 @@ def load_pdf_files(uploaded_files):
         documents = loader.load()
         all_documents.extend(documents)
 
-    # 3. 텍스트를 일정 단위(chunk)로 분할하기
-    #    - chunk_size: 한 덩어리의 최대 길이
-    #    - chunk_overlap: 덩어리 간 겹치는 부분 길이
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     split_docs = text_splitter.split_documents(all_documents)
 
-    # 4. 분할된 문서들을 임베딩하여 벡터 DB(FAISS)에 저장하기
     vector = FAISS.from_documents(split_docs, OpenAIEmbeddings())
     retriever = vector.as_retriever(search_kwargs={"k": 5})
-    # 5. 검색기(retriever) 객체 생성
-    retriever = vector.as_retriever(search_kwargs={"k": 5})
 
-    # 6. retriever를 LangChain Tool 형태로 변환 -> name은 pdf_search로 지정
     retriever_tool = create_retriever_tool(
         retriever,
         name="pdf_search",
@@ -63,21 +55,19 @@ def build_agent(tools):
 
     prompt = ChatPromptTemplate.from_messages([
         ("system",
-        # 7. 여러분의 챗봇에 맞는 system message 작성하기
-        "한국 주식시장에 투자를 돕는 유용한 어시스턴트입니다. "
+         "당신은 기보 직원들을 돕는 유용한 어시스턴트입니다. "
          "먼저 항상 pdf_serach 를 사용하세요 "
          "만약 pdf_search 에서 관련 결과가 없으면 즉시 web_search 만 호출하세요 "
          "두도구를 절대 섞어서 사용하지 마세요"
-         "전문적이고 친근한 톤으로 한국어로 말하며 이모지를 포함하세요"
-        ),
+         "전문적이고 친근한 톤으로 한국어로 말하며 이모지를 포함하세요"),
         ("placeholder", "{chat_history}"),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}")
     ])
 
-    # 8.agent 및 aagent_executor 생성하기
     agent = create_tool_calling_agent(llm=llm, tools=tools, prompt=prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, return_intermediate_steps=True)
+
     return agent_executor
 
 
@@ -88,20 +78,33 @@ def ask_agent(agent_executor, question: str):
     result = agent_executor.invoke({"input": question})
     answer = result["output"]
 
-    # 9. intermediate_steps 통해 사용툴을 출력할 수 있는 코드 완성하기
     # intermediate_steps에서 마지막만 가져오기
     if result.get("intermediate_steps"):
         last_action, _ = result["intermediate_steps"][-1]
         answer += f"\n\n출처:\n- Tool: {last_action.tool}, Query: {last_action.tool_input}"
+
+    return f"답변:\n{answer}"
 
 
 # --------------------------------------------------------------------
 # 5. Streamlit 메인
 # --------------------------------------------------------------------
 def main():
-    # 10. 여러분의 챗봇에 맞는 스타일로 변경하기
     st.set_page_config(page_title="기술보증기금 AI 비서", layout="wide", page_icon="🤖")
-    st.image('data/동학개미.jpg', width=800)
+    #st.image('data/한국주식.jpg', width=400)
+    #st.image('data/동학개미.jpg', width=400)
+
+    col1, col2 = st.columns(2)  # 2개의 컬럼 생성
+
+    with col1:
+            st.image("data/한국주식.jpg",width=400, caption="왼쪽 이미지", use_container_width=True)
+
+    with col2:
+            st.image("data/동학개미.jpg",width=400, caption="오른쪽 이미지", use_container_width=True)
+
+    st.markdown("---")
+    st.subheader("이 아래 내용은 전체 영역 사용 👇")
+
     st.markdown('---')
     st.title("안녕하세요! RAG + Web을 활용한 '기술보증기금 AI 비서' 입니다")  
 
