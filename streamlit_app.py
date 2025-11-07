@@ -106,9 +106,9 @@ def main():
     with st.container():
         col1, col2 = st.columns([1, 1])  # 비율 조정 가능 예: [2,1]
         with col1:
-            st.image('data/한국주식.jpg', use_container_width=True, caption="이미지 1")
+            st.image('data/한국주식.jpg', use_container_width=True)
         with col2:
-            st.image('data/동학개미.jpg', use_container_width=True, caption="이미지 2")
+            st.image('data/동학개미.jpg', use_container_width=True)
 
     st.markdown('---')
     st.title("안녕하세요! RAG + Web을 활용한 '한국주식시장 동향 챗봇' 입니다")  
