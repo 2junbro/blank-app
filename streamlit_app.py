@@ -93,7 +93,7 @@ def ask_agent(agent_executor, question: str):
     if result.get("intermediate_steps"):
         last_action, _ = result["intermediate_steps"][-1]
         answer += f"\n\n출처:\n- Tool: {last_action.tool}, Query: {last_action.tool_input}"
-
+    return f"답변:\n{answer}"
 
 # --------------------------------------------------------------------
 # 5. Streamlit 메인
