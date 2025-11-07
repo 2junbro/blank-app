@@ -101,7 +101,15 @@ def ask_agent(agent_executor, question: str):
 def main():
     # 10. 여러분의 챗봇에 맞는 스타일로 변경하기
     st.set_page_config(page_title="한국주식시장 동향 챗봇", layout="wide", page_icon="🤖")
-    st.image('data/동학개미.jpg', width=800)
+    
+    #st.image('data/동학개미.jpg', width=800)
+    with st.container():
+        col1, col2 = st.columns([1, 1])  # 비율 조정 가능 예: [2,1]
+        with col1:
+            st.image('data/한국주식.jpg', use_container_width=True, caption="이미지 1")
+        with col2:
+            st.image('data/동학개미.jpg', use_container_width=True, caption="이미지 2")
+
     st.markdown('---')
     st.title("안녕하세요! RAG + Web을 활용한 '한국주식시장 동향 챗봇' 입니다")  
 
