@@ -100,10 +100,10 @@ def ask_agent(agent_executor, question: str):
 # --------------------------------------------------------------------
 def main():
     # 10. 여러분의 챗봇에 맞는 스타일로 변경하기
-    st.set_page_config(page_title="기술보증기금 AI 비서", layout="wide", page_icon="🤖")
+    st.set_page_config(page_title="한국주식시장 동향 챗봇", layout="wide", page_icon="🤖")
     st.image('data/동학개미.jpg', width=800)
     st.markdown('---')
-    st.title("안녕하세요! RAG + Web을 활용한 '기술보증기금 AI 비서' 입니다")  
+    st.title("안녕하세요! RAG + Web을 활용한 '한국주식시장 동향 챗봇' 입니다")  
 
     with st.sidebar:
         openai_api = st.text_input("OPENAI API 키", type="password")
