@@ -94,17 +94,19 @@ def main():
     #st.image('data/한국주식.jpg', width=400)
     #st.image('data/동학개미.jpg', width=400)
 
-col1, col2 = st.columns(2)  # 2개의 컬럼 생성
+    col1, col2 = st.columns(2)  # 2개의 컬럼 생성
 
-with col1:
-    st.image("data/한국주식.jpg",width=400, caption="왼쪽 이미지", use_container_width=True)
+    with col1:
+            st.image("data/한국주식.jpg",width=400, caption="왼쪽 이미지", use_container_width=True)
 
-with col2:
-    st.image("data/동학개미.jpg",width=400, caption="오른쪽 이미지", use_container_width=True)
+    with col2:
+            st.image("data/동학개미.jpg",width=400, caption="오른쪽 이미지", use_container_width=True)
 
     st.markdown('---')
     st.title("안녕하세요! RAG + Web을 활용한 '기술보증기금 AI 비서' 입니다")  
-
+    st.markdown("---")
+    st.subheader("이 아래 내용은 전체 영역 사용 👇")
+    
     with st.sidebar:
         openai_api = st.text_input("OPENAI API 키", type="password")
         tavily_api = st.text_input("TAVILY API 키", type="password")
